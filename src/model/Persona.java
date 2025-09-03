@@ -50,6 +50,5 @@ public abstract class Persona {
         return nombre + " " + apellido;
     }
 
-    public abstract String mostrarInfo();
 }
 

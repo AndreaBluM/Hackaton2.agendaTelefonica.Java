@@ -9,61 +9,58 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Agenda {
-    private int maxContactos;
+    private int maxSize;
     private List<Contacto> contactos;
 
-    public Agenda() {
-        this(10);
-    }
-
-    public Agenda(int maxContactos) {
-        this.maxContactos = maxContactos;
+    public Agenda(int maxSize) {
+        this.maxSize = maxSize;
         this.contactos = new ArrayList<>();
     }
 
-    public boolean añadirContacto(Contacto c) {
-        if (agendaLlena()) {
-            System.out.println("La agenda está llena.");
-            return false;
+
+    //* Método Agregar un nuevo contacto
+
+    public String añadirContacto(Contacto c) {
+        try {
+            if (!existeContacto(c)) {
+                contactos.add(c);
+                return "Contacto añadido: " + c.getNombre() + " " + c.getApellido();
+            }
+            return "El contacto ya existe: " + c.getNombre() + " " + c.getApellido();
+        } catch (Exception e) {
+            return " Error al añadir contacto: " + e.getMessage();
         }
-        if (existeContacto(c)) {
-            System.out.println("El contacto ya existe.");
-            return false;
-        }
-        contactos.add(c);
-        System.out.println("Contacto añadido.");
-        return true;
     }
 
-
-    //* Verificar si un contacto ya existe (por nombre y apellido)
+    // Verificar si un contacto ya existe (por nombre y apellido)
     public boolean existeContacto(Contacto c) {
-        return contactos.contains(c);
-    }
-
-    //* Listar en orden ascendente por nombre
-    public List<String> listarContacto() {
-        List<Contacto> copia = new ArrayList<>(contactos);
-
-        //! Ordenar por nombre, y si hay empate por apellido
-        Collections.sort(copia, Comparator
-                .comparing(Contacto::getNombre, String.CASE_INSENSITIVE_ORDER)
-                .thenComparing(Contacto::getApellido, String.CASE_INSENSITIVE_ORDER));
-
-        List<String> resultado = new ArrayList<>();
-        for (Contacto c : copia) {
-            resultado.add(c.mostrarInfo());
+        try {
+            return contactos.contains(c);
+        } catch (Exception e) {
+            System.err.println("Error al verificar si existe el contacto: " + e.getMessage());
+            return false; // Retorna false si ocurre un error
         }
-        return resultado;
+    }
+    // Listar en orden ascendente por nombre
+    public void listarContactos() {
+        contactos.stream()
+                .sorted(Comparator.comparing(Contacto::getNombre, String.CASE_INSENSITIVE_ORDER)
+                        .thenComparing(Contacto::getApellido, String.CASE_INSENSITIVE_ORDER))
+                .forEach(System.out::println);
     }
 
-    public boolean agendaLlena() {
-        return contactos.size() >= maxContactos;
+    //* Devuelve la cantidad de espacios libres en la agenda.
+    //* Calcula la diferencia entre el tamaño máximo y el número actual de contactos.
+    public int espaciosLibres(){
+        return maxSize - contactos.size();
     }
 
-    public int espacioLibres() {
-        return maxContactos - contactos.size();
+    //* Indica si la agenda está llena.
+    //* Retorna true si el número de contactos es igual o mayor al máximo permitido.
+    public boolean agendaLlena(){
+        return contactos.size() >= maxSize;
     }
+
     //* Busca un contacto por nombre y apellido (ignorando mayúsculas/minúsculas).
     //* Retorna el contacto si lo encuentra, o null si no existe.
     public Persona buscaContacto(String nombre, String apellido) {

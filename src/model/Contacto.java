@@ -33,11 +33,16 @@ public class Contacto extends Persona {
         this.email = email;
     }
 
-
     @Override
-    public String mostrarInfo() {
-        return nombre + " " + apellido + " - " + telefono + " - " + email;
+    public String toString() {
+        return "Contacto{" +
+                "telefono='" + telefono + '\'' +
+                ", email='" + email + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'' +
+                '}';
     }
+
 }
 
 
