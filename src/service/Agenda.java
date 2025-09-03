@@ -13,6 +13,7 @@ public class Agenda {
     private List<Contacto> contactos;
     public Agenda(int maxSize) {
         this.maxSize = maxSize;
+        this.contactos = new ArrayList<>();
     }
 
     public Agenda() {
