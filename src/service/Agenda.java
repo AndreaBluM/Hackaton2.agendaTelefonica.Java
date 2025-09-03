@@ -19,27 +19,50 @@ public class Agenda {
         this.contactos = new ArrayList<>();
     }
 
+    //* Método Agregar un nuevo contacto
 
-    //* Verificar si un contacto ya existe (por nombre y apellido)
-    public boolean existeContacto(Contacto c) {
-        return contactos.contains(c);
-    }
-
-    //* Listar en orden ascendente por nombre
-    public List<String> listarContacto() {
-        List<Contacto> copia = new ArrayList<>(contactos);
-
-        //! Ordenar por nombre, y si hay empate por apellido
-        Collections.sort(copia, Comparator
-                .comparing(Contacto::getNombre, String.CASE_INSENSITIVE_ORDER)
-                .thenComparing(Contacto::getApellido, String.CASE_INSENSITIVE_ORDER));
-
-        List<String> resultado = new ArrayList<>();
-        for (Contacto c : copia) {
-            resultado.add(c.mostrarInfo());
+    public String añadirContacto(Contacto c) {
+        try {
+            if (!existeContacto(c)) {
+                contactos.add(c);
+                return "Contacto añadido: " + c.getNombre() + " " + c.getApellido();
+            }
+            return "El contacto ya existe: " + c.getNombre() + " " + c.getApellido();
+        } catch (Exception e) {
+            return " Error al añadir contacto: " + e.getMessage();
         }
-        return resultado;
     }
+
+
+
+    // Verificar si un contacto ya existe (por nombre y apellido)
+    public boolean existeContacto(Contacto c) {
+        try {
+            return contactos.contains(c);
+        } catch (Exception e) {
+            System.err.println("Error al verificar si existe el contacto: " + e.getMessage());
+            return false; // Retorna false si ocurre un error
+        }
+    }
+    // Listar en orden ascendente por nombre
+    public List<String> listarContacto() {
+        try {
+            List<Contacto> copia = new ArrayList<>(contactos);
+            // Ordenar por nombre, y si hay empate por apellido
+            Collections.sort(copia, Comparator
+                    .comparing(Contacto::getNombre, String.CASE_INSENSITIVE_ORDER)
+                    .thenComparing(Contacto::getApellido, String.CASE_INSENSITIVE_ORDER));
+            List<String> resultado = new ArrayList<>();
+            for (Contacto c : copia) {
+                resultado.add(c.mostrarInfo());
+            }
+            return resultado;
+        } catch (Exception e) {
+            System.err.println("Error al listar contactos: " + e.getMessage());
+            return new ArrayList<>(); // Retorna lista vacía si ocurre un error
+        }
+    }
+
 
     //* Devuelve la cantidad de espacios libres en la agenda.
     //* Calcula la diferencia entre el tamaño máximo y el número actual de contactos.
