@@ -9,7 +9,7 @@ public class AgendaController {
     private final Agenda agenda;
 
     public AgendaController() {
-        this.agenda = new Agenda(50); // Tamaño máximo de contactos
+        this.agenda = new Agenda(10); // Tamaño máximo de contactos
     }
 
     // === Agregar un contacto ===
