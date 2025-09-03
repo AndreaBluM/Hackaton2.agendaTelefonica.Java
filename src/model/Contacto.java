@@ -18,9 +18,8 @@ public class Contacto extends Persona {
     }
 
     public void setTelefono(String telefono) {
-        if (!telefono.matches("\\d{9}"))
-            throw new IllegalArgumentException("El teléfono debe tener 9 dígitos.");
-        this.telefono = telefono;
+        if (!telefono.matches("\\d{10}"))
+            throw new IllegalArgumentException("El teléfono debe tener 10 dígitos.");
         this.telefono = telefono;
     }
 
@@ -40,3 +39,5 @@ public class Contacto extends Persona {
         return nombre + " " + apellido + " - " + telefono;
     }
 }
+
+
