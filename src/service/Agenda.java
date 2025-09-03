@@ -9,14 +9,30 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Agenda {
-    private int maxSize;
+    private int maxContactos;
     private List<Contacto> contactos;
-    public Agenda(int maxSize) {
-        this.maxSize = maxSize;
-    }
 
     public Agenda() {
+        this(10);
+    }
+
+    public Agenda(int maxContactos) {
+        this.maxContactos = maxContactos;
         this.contactos = new ArrayList<>();
+    }
+
+    public boolean añadirContacto(Contacto c) {
+        if (agendaLlena()) {
+            System.out.println("La agenda está llena.");
+            return false;
+        }
+        if (existeContacto(c)) {
+            System.out.println("El contacto ya existe.");
+            return false;
+        }
+        contactos.add(c);
+        System.out.println("Contacto añadido.");
+        return true;
     }
 
 
@@ -41,18 +57,13 @@ public class Agenda {
         return resultado;
     }
 
-    //* Devuelve la cantidad de espacios libres en la agenda.
-    //* Calcula la diferencia entre el tamaño máximo y el número actual de contactos.
-    public int espaciosLibres(){
-        return maxSize - contactos.size();
+    public boolean agendaLlena() {
+        return contactos.size() >= maxContactos;
     }
 
-    //* Indica si la agenda está llena.
-    //* Retorna true si el número de contactos es igual o mayor al máximo permitido.
-    public boolean agendaLlena(){
-        return contactos.size() >= maxSize;
+    public int espacioLibres() {
+        return maxContactos - contactos.size();
     }
-
     //* Busca un contacto por nombre y apellido (ignorando mayúsculas/minúsculas).
     //* Retorna el contacto si lo encuentra, o null si no existe.
     public Persona buscaContacto(String nombre, String apellido) {
