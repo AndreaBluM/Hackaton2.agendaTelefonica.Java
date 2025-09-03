@@ -39,17 +39,75 @@ public class AgendaView {
         // Campos de entrada
         TextField txtNombre = new TextField();
         txtNombre.setPromptText("Nombre");
+        Label lblErrorNombre = new Label("");
+        lblErrorNombre.setStyle("-fx-text-fill: red; -fx-font-size: 11px;");
 
         TextField txtApellido = new TextField();
         txtApellido.setPromptText("Apellido");
+        Label lblErrorApellido = new Label("");
+        lblErrorApellido.setStyle("-fx-text-fill: red; -fx-font-size: 11px;");
 
         TextField txtTelefono = new TextField();
-        txtTelefono.setPromptText("Teléfono (7-15 dígitos)");
+        txtTelefono.setPromptText("Teléfono (10 dígitos)");
+        Label lblErrorTelefono = new Label("");
+        lblErrorTelefono.setStyle("-fx-text-fill: red; -fx-font-size: 11px;");
 
         TextField txtEmail = new TextField();
         txtEmail.setPromptText("Correo electrónico");
+        Label lblErrorEmail = new Label("");
+        lblErrorEmail.setStyle("-fx-text-fill: red; -fx-font-size: 11px;");
 
-        VBox camposBox = new VBox(10, lblFormulario, txtNombre, txtApellido, txtTelefono, txtEmail);
+        // Añadir listeners para validaciones en tiempo real
+        txtNombre.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue.isEmpty()) {
+                lblErrorNombre.setText("El nombre no puede estar vacío");
+            } else if (!newValue.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ]+")) {
+                lblErrorNombre.setText("El nombre solo puede contener letras");
+            } else {
+                lblErrorNombre.setText("");
+            }
+        });
+
+        txtApellido.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue.isEmpty()) {
+                lblErrorApellido.setText("El apellido no puede estar vacío");
+            } else if (!newValue.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ]+")) {
+                lblErrorApellido.setText("El apellido solo puede contener letras");
+            } else {
+                lblErrorApellido.setText("");
+            }
+        });
+
+        txtTelefono.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue.isEmpty()) {
+                lblErrorTelefono.setText("El teléfono no puede estar vacío");
+            } else if (!newValue.matches("\\d+")) {
+                lblErrorTelefono.setText("El teléfono solo puede contener números");
+            } else if (newValue.length() != 10) {
+                lblErrorTelefono.setText("El teléfono debe tener exactamente 10 dígitos");
+            } else {
+                lblErrorTelefono.setText("");
+            }
+        });
+
+        txtEmail.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue.isEmpty()) {
+                lblErrorEmail.setText("El email no puede estar vacío");
+            } else if (!newValue.contains("@") || !newValue.contains(".")) {
+                lblErrorEmail.setText("El email debe contener '@' y '.'");
+            } else if (!newValue.matches("^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$")) {
+                lblErrorEmail.setText("Formato de email incorrecto");
+            } else {
+                lblErrorEmail.setText("");
+            }
+        });
+
+        VBox nombreBox = new VBox(3, txtNombre, lblErrorNombre);
+        VBox apellidoBox = new VBox(3, txtApellido, lblErrorApellido);
+        VBox telefonoBox = new VBox(3, txtTelefono, lblErrorTelefono);
+        VBox emailBox = new VBox(3, txtEmail, lblErrorEmail);
+
+        VBox camposBox = new VBox(10, lblFormulario, nombreBox, apellidoBox, telefonoBox, emailBox);
         camposBox.setPadding(new Insets(10, 0, 20, 0));
 
         // Botones (colores planos)
@@ -96,15 +154,69 @@ public class AgendaView {
 
         // Acciones
         btnAgregar.setOnAction(e -> {
-            String mensaje = controller.agregarContacto(
-                    txtNombre.getText(),
-                    txtApellido.getText(),
-                    txtTelefono.getText(),
-                    txtEmail.getText()
-            );
-            mostrarAlertaStyled("Resultado", mensaje);
-            txtNombre.clear(); txtApellido.clear(); txtTelefono.clear(); txtEmail.clear();
-            contactosObs.setAll(controller.getContactos());
+            // Validar todos los campos antes de enviar
+            boolean hayErrores = false;
+            StringBuilder errores = new StringBuilder("Por favor corrige los siguientes errores:\n");
+
+            // Validar nombre
+            if (txtNombre.getText() == null || txtNombre.getText().trim().isEmpty()) {
+                errores.append("- El nombre no puede estar vacío\n");
+                hayErrores = true;
+            } else if (!txtNombre.getText().matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ]+")) {
+                errores.append("- El nombre solo puede contener letras\n");
+                hayErrores = true;
+            }
+
+            // Validar apellido
+            if (txtApellido.getText() == null || txtApellido.getText().trim().isEmpty()) {
+                errores.append("- El apellido no puede estar vacío\n");
+                hayErrores = true;
+            } else if (!txtApellido.getText().matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ]+")) {
+                errores.append("- El apellido solo puede contener letras\n");
+                hayErrores = true;
+            }
+
+            // Validar teléfono
+            if (txtTelefono.getText() == null || txtTelefono.getText().trim().isEmpty()) {
+                errores.append("- El teléfono no puede estar vacío\n");
+                hayErrores = true;
+            } else if (!txtTelefono.getText().matches("\\d+")) {
+                errores.append("- El teléfono solo puede contener números\n");
+                hayErrores = true;
+            } else if (txtTelefono.getText().length() != 10) {
+                errores.append("- El teléfono debe tener exactamente 10 dígitos\n");
+                hayErrores = true;
+            }
+
+            // Validar email
+            if (txtEmail.getText() == null || txtEmail.getText().trim().isEmpty()) {
+                errores.append("- El email no puede estar vacío\n");
+                hayErrores = true;
+            } else if (!txtEmail.getText().matches("^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$")) {
+                errores.append("- El email no tiene un formato válido\n");
+                hayErrores = true;
+            }
+
+            // Si hay errores, mostrar alerta y no continuar
+            if (hayErrores) {
+                mostrarAlertaStyled("Error de Validación", errores.toString());
+                return;
+            }
+
+            // Si no hay errores, intentar agregar el contacto
+            try {
+                String mensaje = controller.agregarContacto(
+                        txtNombre.getText(),
+                        txtApellido.getText(),
+                        txtTelefono.getText(),
+                        txtEmail.getText()
+                );
+                mostrarAlertaStyled("Resultado", mensaje);
+                txtNombre.clear(); txtApellido.clear(); txtTelefono.clear(); txtEmail.clear();
+                contactosObs.setAll(controller.getContactos());
+            } catch (Exception ex) {
+                mostrarAlertaStyled("Error", "Ha ocurrido un error: " + ex.getMessage());
+            }
         });
 
 //        btnListar.setOnAction(e -> contactosObs.setAll(controller.getContactos()));
@@ -149,14 +261,13 @@ public class AgendaView {
 
         Scene scene = new Scene(root);
         // Cargar CSS (debe existir en resources/styles/style.css)
-        try {
-            String css = Objects.requireNonNull(getClass().getResource("/styles/style.css")).toExternalForm();
-            scene.getStylesheets().add(css);
-        } catch (Exception ex) {
+        //try {
+         //   String css = Objects.requireNonNull(getClass().getResource("/styles/style.css")).toExternalForm();
+           // scene.getStylesheets().add(css);
+        //} catch (Exception ex) {
             // si no encuentra CSS no es crítico; seguimos sin él
-            System.err.println("No se encontró style.css en /styles/style.css");
-        }
-
+         //   System.err.println("No se encontró style.css en /styles/style.css");
+        //}
         primaryStage.setScene(scene);
         primaryStage.show();
 
