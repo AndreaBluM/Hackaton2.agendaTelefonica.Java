@@ -55,6 +55,15 @@ public class Contacto extends Persona {
         return email;
     }
 
+    public void setEmail(String email) {
+        if (email != null && !email.isEmpty()) {
+            if (!email.contains("@") || !email.contains(".")) {
+                throw new IllegalArgumentException("El email debe contener '@' y '.'");
+            }
+        }
+        this.email = email;
+    }
+
 
 
 
