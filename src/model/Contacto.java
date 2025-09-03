@@ -36,7 +36,7 @@ public class Contacto extends Persona {
 
 
     @Override
-    public String toString() {
-        return nombre + " " + apellido + " - " + telefono;
+    public String mostrarInfo() {
+        return nombre + " " + apellido + " - " + telefono + " - " + email;
     }
 }

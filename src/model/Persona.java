@@ -46,8 +46,10 @@ public abstract class Persona {
         return nombre.equalsIgnoreCase(p.nombre) &&
                 apellido.equalsIgnoreCase(p.apellido);
     }
-    public String mostrarInfo(){
+    public String toString(){
         return nombre + " " + apellido;
     }
+
+    public abstract String mostrarInfo();
 }
 
